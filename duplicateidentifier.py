@@ -68,3 +68,31 @@ fs_2 = data[['fuzz_qratio', 'fuzz_WRatio', 'fuzz_partial_ratio',
        'fuzz_token_set_ratio']]
 
 print("Fuzzy Features: ", fs_2)
+
+#logisticregression
+
+scaler = StandardScaler()
+y = data.is_duplicate.values
+y = y.astype('float32').reshape(-1, 1)
+X = data[fs_1+fs_2]
+X = X.replace([np.inf, -np.inf], np.nan).fillna(0).values
+X = scaler.fit_transform(X)
+
+np.random.seed(42)
+n_all, _ = y.shape
+idx = np.arange(n_all)
+np.random.shuffle(idx)
+n_split = n_all // 10
+idx_val = idx[:n_split]
+idx_train = idx[n_split:]
+x_train = X[idx_train]
+y_train = np.ravel(y[idx_train])
+x_val = X[idx_val]
+y_val = np.ravel(y[idx_val])
+
+logres = linear_model.LogisticRegression(C=0.1,
+                                 solver='sag', max_iter=1000)
+logres.fit(x_train, y_train)
+lr_preds = logres.predict(x_val)
+log_res_accuracy = np.sum(lr_preds == y_val) / len(y_val)
+print("Logistic regr accuracy: %0.3f" % log_res_accuracy)
