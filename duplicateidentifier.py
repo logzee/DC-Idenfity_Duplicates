@@ -4,6 +4,8 @@ from nltk import word_tokenize, sent_tokenize
 from nltk.corpus import stopwords
 from nltk.stem import LancasterStemmer, WordNetLemmatizer
 from sklearn.feature_extraction.text import TfidfVectorizer
+from copy import deepcopy
+from fuzzywuzzy import fuzz
 
 root = '/Users/alinajam/Desktop/quora_duplicate_questions.tsv'
 data = pd.read_csv(root, delimiter='\t',  engine='python')
