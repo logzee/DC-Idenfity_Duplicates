@@ -1,11 +1,15 @@
 import nltk
+import numpy as np
 import pandas as pd
+
 from fuzzywuzzy import fuzz
 from fuzzywuzzy import process
 from nltk import word_tokenize, sent_tokenize
 from nltk.corpus import stopwords
 from nltk.stem import LancasterStemmer, WordNetLemmatizer
 from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn import  preprocessing
+from sklearn import neighbors, naive_bayes, svm, linear_model
 
 root = '/Users/mcint/comp395/HW/DC4/quora_duplicate_questions.tsv'
 data = pd.read_csv(root, delimiter='\t',  engine='python')
@@ -71,7 +75,7 @@ print("Fuzzy Features: ", fs_2)
 
 #logisticregression
 
-scaler = StandardScaler()
+scaler = preprocessing.StandardScaler()
 y = data.is_duplicate.values
 y = y.astype('float32').reshape(-1, 1)
 X = data[fs_1+fs_2]
@@ -96,3 +100,18 @@ logres.fit(x_train, y_train)
 lr_preds = logres.predict(x_val)
 log_res_accuracy = np.sum(lr_preds == y_val) / len(y_val)
 print("Logistic regr accuracy: %0.3f" % log_res_accuracy)
+
+KNN = neighbors.KNeighborsClassifier(10, weights='uniform')
+KNN.fit(x_train, y_train)
+
+KNN_preds = KNN.predict(x_val)
+KNN_accuracy = np.sum(KNN_preds == y_val) / len(y_val)
+print("Nearest Neighbors accuracy: %0.3f" % KNN_accuracy)
+
+NB = naive_bayes.GaussianNB()
+NB = NB.fit(x_train, y_train)
+
+NB_preds = NB.predict(x_val)
+NB_accuracy = np.sum(NB_preds == y_val) / len(y_val)
+print("Gaussian Naive Bayes accuracy: %0.3f" % NB_accuracy)
+
