@@ -101,17 +101,34 @@ lr_preds = logres.predict(x_val)
 log_res_accuracy = np.sum(lr_preds == y_val) / len(y_val)
 print("Logistic regr accuracy: %0.3f" % log_res_accuracy)
 
-KNN = neighbors.KNeighborsClassifier(10, weights='uniform')
-KNN.fit(x_train, y_train)
+# KNN = neighbors.KNeighborsClassifier(10, weights='uniform')
+# KNN.fit(x_train, y_train)
 
-KNN_preds = KNN.predict(x_val)
-KNN_accuracy = np.sum(KNN_preds == y_val) / len(y_val)
-print("Nearest Neighbors accuracy: %0.3f" % KNN_accuracy)
+# KNN_preds = KNN.predict(x_val)
+# KNN_accuracy = np.sum(KNN_preds == y_val) / len(y_val)
+# print("Nearest Neighbors accuracy: %0.3f" % KNN_accuracy)
 
-NB = naive_bayes.GaussianNB()
-NB = NB.fit(x_train, y_train)
+# NB = naive_bayes.GaussianNB()
+# NB = NB.fit(x_train, y_train)
 
-NB_preds = NB.predict(x_val)
-NB_accuracy = np.sum(NB_preds == y_val) / len(y_val)
-print("Gaussian Naive Bayes accuracy: %0.3f" % NB_accuracy)
+# NB_preds = NB.predict(x_val)
+# NB_accuracy = np.sum(NB_preds == y_val) / len(y_val)
+# print("Gaussian Naive Bayes accuracy: %0.3f" % NB_accuracy)
+
+#cross validation
+
+n_splits = 10
+kf = KFold(n_splits=n_splits)
+cv_accuracies = []
+for train, test in kf.split(data[fs_1+fs_2]):
+    train_data = np.array(data[fs_1+fs_2])[train]
+    test_data = np.array(data[fs_1+fs_2])[test]
+    classifier = linear_model.LogisticRegression(C=0.1,
+                                 solver='sag', max_iter=1000)
+    cv_accuracies.append(log_res_accuracy(classifier, test_data))
+average = sum(cv_accuracies)/n_splits
+
+print('Accuracies with ' + str(n_splits) + '-fold cross validation: ')
+for cv_accuracy in cv_accuracies:
+    print(cv_accuracy)
 
